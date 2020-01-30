@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Exa_102_HelloWorld</string>
+    <string name="text1">Welcome to our first app!</string>
+    <string name="output_msg">Hello - %s - nice to meet you</string>
+    <string name="finished">Finish</string>
+</resources>

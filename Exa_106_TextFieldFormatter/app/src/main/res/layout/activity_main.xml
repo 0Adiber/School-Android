@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Textfield-Formatter"
+        android:textColor="#0A6792"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etText"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@id/tvTitle"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textPersonName"
+        android:maxLines="5"
+        android:singleLine="false"
+        android:textAlignment="textStart"
+        android:textSize="18dp"
+        tools:text="This is where\n your text goes..." />
+
+    <TextView
+        android:id="@+id/tvStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etText"
+        android:text="Style:"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tvSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvStyle"
+        android:text="Size: 12"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tvFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvSize"
+        android:text="Font: "
+        android:textSize="24sp" />
+
+    <CheckBox
+        android:id="@+id/cbBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvStyle"
+        android:layout_marginLeft="98dp"
+        android:layout_toRightOf="@id/tvStyle"
+        android:text="bold"
+        android:textStyle="bold" />
+
+    <CheckBox
+        android:id="@+id/cbItalic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvStyle"
+        android:layout_marginLeft="74dp"
+        android:layout_toRightOf="@id/cbBold"
+        android:text="italic"
+        android:textStyle="italic" />
+
+    <SeekBar
+        android:id="@+id/sbSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/tvSize"
+        android:layout_alignBottom="@id/tvSize"
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@id/tvSize"
+        android:background="#00FFFFFF"
+        android:max="36"
+        android:min="12"
+        android:progress="2"
+        android:progressBackgroundTint="#333333"
+        android:progressTint="#0090FF"
+        android:thumbTint="#012FD3"
+        android:verticalScrollbarPosition="left" />
+
+    <RadioGroup
+        android:id="@+id/rgFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvFont"
+        android:layout_toEndOf="@id/tvFont">
+
+        <RadioButton
+            android:id="@+id/rbUbuntu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_light"
+            android:text="Ubuntu" />
+
+        <RadioButton
+            android:id="@+id/rbGrandHotel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/grand_hotel"
+            android:text="Grand Hotel" />
+
+        <RadioButton
+            android:id="@+id/rbPermanent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/permanent_marker"
+            android:text="Permanent Marker" />
+    </RadioGroup>
+</RelativeLayout>
