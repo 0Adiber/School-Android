@@ -15,6 +15,7 @@ public class Field {
         this.discovered = discovered;
         this.minesAround = minesAround;
         this.id = id;
+        this.flagged = false;
     }
 
     public boolean isMine() {

@@ -9,14 +9,19 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private Button[] buttons = new Button[81];
 
     private ImageButton btReset;
-    private TextView tvBombs, tvTime;
+    private TextView tvBombs;
+    private Chronometer tvTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         gridLayout = findViewById(R.id.glField);
         btReset = findViewById(R.id.btReset);
         tvBombs = findViewById(R.id.tvBombs);
-        tvTime = findViewById(R.id.tvTime);
+        tvTimer = findViewById(R.id.tvTimer);
 
         LinearLayout.LayoutParams llLP = (LinearLayout.LayoutParams)gridLayout.getLayoutParams();
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -64,8 +70,15 @@ public class MainActivity extends AppCompatActivity {
                     if(GameLogic.start) {
                         GameLogic.shortClick(bt, buttons);
                     }
-                    else
+                    else {
                         GameLogic.generateField(bt.getId(), buttons);
+                        tvTimer.setBase(SystemClock.elapsedRealtime());
+                        tvTimer.start();
+                    }
+
+                    if(GameLogic.checkIfWon() || GameLogic.gameOver)
+                        tvTimer.stop();
+
                 });
 
                 bt.setOnLongClickListener(v -> {
@@ -80,9 +93,17 @@ public class MainActivity extends AppCompatActivity {
         GameLogic.reset(buttons);
         tvBombs.setText("" + GameLogic.bombsLeft);
 
-        btReset.setOnClickListener(v -> GameLogic.reset(buttons));
+        btReset.setOnClickListener(v -> {
+            GameLogic.reset(buttons);
+            tvBombs.setText("" + GameLogic.bombsLeft);
+            tvTimer.setBase(SystemClock.elapsedRealtime());
+            tvTimer.stop();
+        });
 
-
+        tvTimer.setOnChronometerTickListener(v -> {
+            tvTimer = v;
+        });
 
     }
+
 }

@@ -55,6 +55,7 @@ public class GameLogic {
         recursiveNull(first, buttons);
 
         start = true;
+
     }
 
     public static void reset(Button[] buttons) {
@@ -120,14 +121,17 @@ public class GameLogic {
         if(field.get(bt.getId()).isDiscovered())
             return bombsLeft;
 
-        field.get(bt.getId()).setFlagged(!field.get(bt.getId()).isFlagged());
-
-        if(field.get(bt.getId()).isFlagged()) {
-            bt.setBackground(ContextCompat.getDrawable(bt.getContext(), R.drawable.flag));
-            return --bombsLeft;
+        if(!field.get(bt.getId()).isFlagged()) {
+            if(bombsLeft > 0) {
+                bt.setBackground(ContextCompat.getDrawable(bt.getContext(), R.drawable.flag));
+                field.get(bt.getId()).setFlagged(true);
+                return --bombsLeft;
+            }
+            return bombsLeft;
         }
         else {
             bt.setBackgroundResource(android.R.drawable.btn_default);
+            field.get(bt.getId()).setFlagged(false);
             return ++bombsLeft;
         }
     }
@@ -181,12 +185,21 @@ public class GameLogic {
                 int tmp = id + (i*10) + j;
                 if(!field.containsKey(tmp))
                     continue;
-                if(field.get(tmp).getMinesAround() == 0 && !field.get(tmp).isDiscovered() && !field.get(tmp).isMine()) {
+                if(field.get(tmp).getMinesAround() == 0 && !field.get(tmp).isDiscovered() && !field.get(tmp).isMine() && !field.get(tmp).isFlagged()) {
                     recursiveNull(tmp, buttons);
                 }
             }
         }
 
+    }
+
+    public static boolean checkIfWon() {
+        for(Field f : field.values()) {
+            if(!f.isDiscovered() && !f.isFlagged())
+                return false;
+        }
+
+        return true;
     }
 
 }
