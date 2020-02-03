@@ -50,10 +50,8 @@ public class MainActivity extends AppCompatActivity {
         tvBombs = findViewById(R.id.tvBombs);
         tvTimer = findViewById(R.id.tvTimer);
 
-        LinearLayout.LayoutParams llLP = (LinearLayout.LayoutParams)gridLayout.getLayoutParams();
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 
         for (int i = 0; i < 9; i++) {
