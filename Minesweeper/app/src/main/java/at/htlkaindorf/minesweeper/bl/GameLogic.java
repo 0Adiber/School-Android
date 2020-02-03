@@ -26,18 +26,28 @@ public class GameLogic {
     public static void generateField(int first, Button[] buttons) {
 
         Random rand = new Random();
+
         int setBombs = 0;
 
-        while(setBombs < bombsLeft) {
-            int id = rand.nextInt(9)*10 + rand.nextInt(9);
-            if(first != id) {
-                if(field.containsKey(id))
+        List<Integer> noBombId = new ArrayList<>();
+
+        for(int i = -1; i<=1; i++) {
+            for(int j = -1; j<=1; j++) {
+                int tmp = first + (i*10) + j;
+                noBombId.add(tmp);
+            }
+        }
+
+        while (setBombs < bombsLeft) {
+            int id = rand.nextInt(9) * 10 + rand.nextInt(9);
+            if (!noBombId.contains(id)) {
+                if (field.containsKey(id))
                     continue;
 
                 field.put(id, new Field(true, false, 0, id));
 
-                for(Button b : buttons) {
-                    if(b.getId() == id) {
+                for (Button b : buttons) {
+                    if (b.getId() == id) {
                         setBombs++;
                     }
                 }
@@ -49,10 +59,12 @@ public class GameLogic {
             if(!field.containsKey(b.getId())) {
                 field.put(b.getId(), new Field(false, false, getBombsAround(b.getId()), b.getId()));
             }
+            //do after other if, so that no null pointer
+            if(b.getId() == first) {
+                //call this, to do the click
+                shortClick(b, buttons);
+            }
         }
-
-        //check if first click is zero
-        recursiveNull(first, buttons);
 
         start = true;
 
@@ -161,13 +173,6 @@ public class GameLogic {
             public void run() {
                 for(Button b : buttons) {
                     if(b.getId() == id) {
-                        try {
-                            Thread.sleep(250);
-                        } catch (InterruptedException e) {
-                            System.out.println(e.getMessage());
-                        }
-
-
                         b.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
 
                         final Animation anim = AnimationUtils.loadAnimation(b.getContext(), R.anim.bounce);
@@ -175,21 +180,38 @@ public class GameLogic {
                         MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
                         anim.setInterpolator(interpolator);
                         b.startAnimation(anim);
+
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            System.out.println(e.getMessage());
+                        }
+
+                        for(int i = -1; i<=1; i++) {
+                            for(int j = -1; j<=1; j++) {
+                                int tmp = id + (i*10) + j;
+                                if(!field.containsKey(tmp))
+                                    continue;
+                                if(!field.get(tmp).isDiscovered() && !field.get(tmp).isMine() && !field.get(tmp).isFlagged()) {
+                                    if(field.get(tmp).getMinesAround() == 0)
+                                        recursiveNull(tmp, buttons);
+                                    else {
+                                        for(Button tb : buttons) {
+                                            if(tb.getId() == tmp) {
+                                                tb.startAnimation(anim);
+                                                tb.setText("" + field.get(tmp).getMinesAround());
+                                                tb.setTextColor((tb.getText() == "1" ? Color.BLUE : (tb.getText() == "2" ? Color.GREEN : Color.RED)));
+                                                field.get(tmp).setDiscovered(true);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }).start();
-
-        for(int i = -1; i<=1; i++) {
-            for(int j = -1; j<=1; j++) {
-                int tmp = id + (i*10) + j;
-                if(!field.containsKey(tmp))
-                    continue;
-                if(field.get(tmp).getMinesAround() == 0 && !field.get(tmp).isDiscovered() && !field.get(tmp).isMine() && !field.get(tmp).isFlagged()) {
-                    recursiveNull(tmp, buttons);
-                }
-            }
-        }
 
     }
 

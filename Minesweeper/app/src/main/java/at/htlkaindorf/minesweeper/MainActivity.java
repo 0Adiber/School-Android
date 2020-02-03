@@ -8,6 +8,7 @@ import at.htlkaindorf.minesweeper.bl.GameLogic;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
@@ -33,10 +34,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvBombs;
     private Chronometer tvTimer;
 
+    private MediaPlayer audio = new MediaPlayer();
+    private MediaPlayer sfx = new MediaPlayer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        audio = MediaPlayer.create(getApplicationContext(), R.raw.bouncing_seals);
+        audio.setLooping(true);
 
         gridLayout = findViewById(R.id.glField);
         btReset = findViewById(R.id.btReset);
@@ -68,16 +75,30 @@ public class MainActivity extends AppCompatActivity {
                     bt.startAnimation(anim);
 
                     if(GameLogic.start) {
-                        GameLogic.shortClick(bt, buttons);
+                        int res = GameLogic.shortClick(bt, buttons);
+                        if(res == 1) {
+                            sfx = MediaPlayer.create(getApplicationContext(), R.raw.bomb);
+                            sfx.start();
+                        }
                     }
+
                     else {
                         GameLogic.generateField(bt.getId(), buttons);
                         tvTimer.setBase(SystemClock.elapsedRealtime());
                         tvTimer.start();
+                        audio.seekTo(0);
+                        audio.start();
                     }
 
-                    if(GameLogic.checkIfWon() || GameLogic.gameOver)
+                    boolean won = GameLogic.checkIfWon();
+                    if(won|| GameLogic.gameOver) {
+                        audio.pause();
                         tvTimer.stop();
+                        if(won && !sfx.isPlaying()) {
+                            sfx = MediaPlayer.create(getApplicationContext(), R.raw.won);
+                            sfx.start();
+                        }
+                    }
 
                 });
 
@@ -98,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
             tvBombs.setText("" + GameLogic.bombsLeft);
             tvTimer.setBase(SystemClock.elapsedRealtime());
             tvTimer.stop();
+            audio.pause();
+            sfx.stop();
         });
 
         tvTimer.setOnChronometerTickListener(v -> {
