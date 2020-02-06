@@ -3,12 +3,14 @@ package at.htlkaindorf.minesweeper.bl;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -67,7 +69,6 @@ public class GameLogic {
         }
 
         start = true;
-
     }
 
     public static void reset(Button[] buttons) {
@@ -85,7 +86,6 @@ public class GameLogic {
             MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
             anim.setInterpolator(interpolator);
             b.startAnimation(anim);
-
         }
         gameOver = false;
     }
@@ -112,11 +112,11 @@ public class GameLogic {
 
             return 1;
         } else if(field.get(bt.getId()).getMinesAround() == 0) { //clicked on zero
-                recursiveNull(bt.getId(), buttons);
+                recursiveNull2(bt.getId(), buttons);
             return 3;
         } else { //it is a "normal" button
             bt.setText("" + field.get(bt.getId()).getMinesAround());
-            bt.setTextColor((bt.getText()=="1" ? Color.BLUE : (bt.getText()=="2"?Color.GREEN : Color.RED)));
+            bt.setTextColor((field.get(bt.getId()).getMinesAround()==1 ? Color.BLUE : (field.get(bt.getId()).getMinesAround()==2?Color.GREEN : Color.RED)));
             field.get(bt.getId()).setDiscovered(true);
         }
 
@@ -212,6 +212,44 @@ public class GameLogic {
                 }
             }
         }).start();
+
+    }
+
+    private static void recursiveNull2(int id, Button[] buttons) {
+
+        if(field.get(id).isDiscovered())
+            return;
+
+        field.get(id).setDiscovered(true);
+
+        for(Button b : buttons) {
+            if(b.getId() == id) {
+                if(field.get(id).getMinesAround() == 0) {
+                    b.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+
+                    for(int i = -1; i<=1; i++) {
+                        for (int j = -1; j <= 1; j++) {
+                            int tmp = id + (i * 10) + j;
+
+                            if (!field.containsKey(tmp)) {
+                                Log.d("Main", ""+tmp);
+                                continue;
+                            }
+                            if (!field.get(tmp).isMine() && !field.get(tmp).isFlagged()) {
+                                recursiveNull2(tmp, buttons);
+                            }
+                        }
+                    }
+
+                } else {
+                    b.setText("" + field.get(id).getMinesAround());
+                    b.setTextColor((field.get(id).getMinesAround() == 1 ? Color.BLUE : (field.get(id).getMinesAround() == 2 ? Color.GREEN : Color.RED)));
+                }
+
+                break;
+            }
+        }
+
 
     }
 
