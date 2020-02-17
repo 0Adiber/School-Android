@@ -1,14 +1,10 @@
 package gui;
 
 import java.awt.GridLayout;
-import java.time.Instant;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.time.zone.ZoneRulesException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -32,8 +28,12 @@ public class Clock extends JPanel implements Runnable{
         while(!Thread.interrupted()) {
             LocalTime time = LocalTime.now();
             if(!city.equals("L")) {
-                Calendar cal = new GregorianCalendar(TimeZone.getTimeZone(city));
-                time = LocalTime.of(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
+                try {
+                    ZoneId zoneId = ZoneId.of(city);
+                    time=LocalTime.now(zoneId);
+                }catch(ZoneRulesException ex) {
+                    throw new ZoneRulesException("Wrong format");
+                }
             }
             String timeStr = time.format(DTF);
             
