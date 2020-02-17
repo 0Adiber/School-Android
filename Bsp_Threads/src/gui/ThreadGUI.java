@@ -55,12 +55,15 @@ public class ThreadGUI extends javax.swing.JFrame {
 
  
     private void onStart(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onStart
-        thread = new Thread((TimerLabel) lbTime);
-        thread.start();
+        if(thread == null || !thread.isAlive()) {
+            thread = new Thread((TimerLabel) lbTime);
+            thread.start();
+        }
     }//GEN-LAST:event_onStart
 
     private void onStop(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onStop
-        thread.interrupt();
+        if(thread != null)
+            thread.interrupt();
     }//GEN-LAST:event_onStop
 
     public static void main(String args[]) {
