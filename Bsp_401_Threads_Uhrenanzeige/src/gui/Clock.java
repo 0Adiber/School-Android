@@ -1,6 +1,8 @@
 package gui;
 
+import api.APIRequests;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +14,7 @@ public class Clock extends JPanel implements Runnable{
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("HH:mm:ss");
     private Digit[] digits = new Digit[8];
     private String city;
+    private ZoneId zoneId;
     
     public Clock() {
         this.setLayout(new GridLayout(1, 8));
@@ -29,10 +32,17 @@ public class Clock extends JPanel implements Runnable{
             LocalTime time = LocalTime.now();
             if(!city.equals("L")) {
                 try {
-                    ZoneId zoneId = ZoneId.of(city);
+                    if(zoneId == null) {
+                        city = APIRequests.getTimeFromOrt(city);
+                        zoneId = ZoneId.of(city);
+                    }
                     time=LocalTime.now(zoneId);
                 }catch(ZoneRulesException ex) {
-                    throw new ZoneRulesException("Wrong format");
+                    zoneId = null;
+                    throw new ZoneRulesException("Could not fetch time, try again later..");
+                } catch (IOException ex) {
+                    zoneId = null;
+                    throw new ZoneRulesException("Could not fetch time, try again later..");
                 }
             }
             String timeStr = time.format(DTF);
@@ -61,6 +71,7 @@ public class Clock extends JPanel implements Runnable{
     
     public void setCity(String city) {
         this.city = city;
+        this.zoneId = null;
     }
     
      public static void main(String[] args) throws InterruptedException {      

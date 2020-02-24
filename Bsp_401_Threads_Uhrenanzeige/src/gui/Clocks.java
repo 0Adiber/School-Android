@@ -24,28 +24,30 @@ public class Clocks extends javax.swing.JFrame {
         pns[2] = pnSecond;
         
         ((Clock)pnLocal).setCity("L");
-        ((Clock)pnFirst).setCity("Australia/Sydney");
-        ((Clock)pnSecond).setCity("America/New_York");
+        ((Clock)pnFirst).setCity("Sydney");
+        ((Clock)pnSecond).setCity("New York");
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
+        West = new javax.swing.JPanel();
         tfLocal = new javax.swing.JTextField();
         cbLocal = new javax.swing.JCheckBox();
-        pnLocal = new Clock();
         tfFirst = new javax.swing.JTextField();
         cbFirst = new javax.swing.JCheckBox();
-        pnFirst = new Clock();
         tfSecond = new javax.swing.JTextField();
         cbSecond = new javax.swing.JCheckBox();
+        Center = new javax.swing.JPanel();
+        pnLocal = new Clock();
+        pnFirst = new Clock();
         pnSecond = new Clock();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Time");
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        West.setLayout(new java.awt.GridLayout(3, 2));
 
         tfLocal.setEditable(false);
         tfLocal.setBackground(new java.awt.Color(0, 0, 0));
@@ -55,11 +57,7 @@ public class Clocks extends javax.swing.JFrame {
         tfLocal.setText("Local Time");
         tfLocal.setBorder(null);
         tfLocal.setName(""); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(tfLocal, gridBagConstraints);
+        West.add(tfLocal);
 
         cbLocal.setBackground(new java.awt.Color(0, 0, 0));
         cbLocal.setActionCommand("0");
@@ -68,20 +66,7 @@ public class Clocks extends javax.swing.JFrame {
                 cbLocalActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(cbLocal, gridBagConstraints);
-
-        pnLocal.setBackground(new java.awt.Color(0, 0, 0));
-        pnLocal.setMinimumSize(new java.awt.Dimension(290, 100));
-        pnLocal.setPreferredSize(new java.awt.Dimension(290, 100));
-        pnLocal.setLayout(new java.awt.GridLayout(1, 0));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(pnLocal, gridBagConstraints);
+        West.add(cbLocal);
 
         tfFirst.setBackground(new java.awt.Color(0, 0, 0));
         tfFirst.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -96,13 +81,7 @@ public class Clocks extends javax.swing.JFrame {
                 onCityChange(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(tfFirst, gridBagConstraints);
+        West.add(tfFirst);
 
         cbFirst.setBackground(new java.awt.Color(0, 0, 0));
         cbFirst.setActionCommand("1");
@@ -111,24 +90,7 @@ public class Clocks extends javax.swing.JFrame {
                 cbLocalActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(cbFirst, gridBagConstraints);
-
-        pnFirst.setBackground(new java.awt.Color(0, 0, 0));
-        pnFirst.setMinimumSize(new java.awt.Dimension(290, 100));
-        pnFirst.setPreferredSize(new java.awt.Dimension(290, 100));
-        pnFirst.setLayout(new java.awt.GridLayout(1, 0));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(pnFirst, gridBagConstraints);
+        West.add(cbFirst);
 
         tfSecond.setBackground(new java.awt.Color(0, 0, 0));
         tfSecond.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -142,13 +104,7 @@ public class Clocks extends javax.swing.JFrame {
                 onCityChange(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(tfSecond, gridBagConstraints);
+        West.add(tfSecond);
 
         cbSecond.setBackground(new java.awt.Color(0, 0, 0));
         cbSecond.setActionCommand("2");
@@ -157,24 +113,31 @@ public class Clocks extends javax.swing.JFrame {
                 cbLocalActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(cbSecond, gridBagConstraints);
+        West.add(cbSecond);
+
+        getContentPane().add(West, java.awt.BorderLayout.WEST);
+
+        Center.setLayout(new java.awt.GridLayout(3, 1));
+
+        pnLocal.setBackground(new java.awt.Color(0, 0, 0));
+        pnLocal.setMinimumSize(new java.awt.Dimension(290, 100));
+        pnLocal.setPreferredSize(new java.awt.Dimension(290, 100));
+        pnLocal.setLayout(new java.awt.GridLayout(1, 0));
+        Center.add(pnLocal);
+
+        pnFirst.setBackground(new java.awt.Color(0, 0, 0));
+        pnFirst.setMinimumSize(new java.awt.Dimension(290, 100));
+        pnFirst.setPreferredSize(new java.awt.Dimension(290, 100));
+        pnFirst.setLayout(new java.awt.GridLayout(1, 0));
+        Center.add(pnFirst);
 
         pnSecond.setBackground(new java.awt.Color(0, 0, 0));
         pnSecond.setMinimumSize(new java.awt.Dimension(290, 100));
         pnSecond.setPreferredSize(new java.awt.Dimension(290, 100));
         pnSecond.setLayout(new java.awt.GridLayout(1, 0));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(pnSecond, gridBagConstraints);
+        Center.add(pnSecond);
+
+        getContentPane().add(Center, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -224,6 +187,8 @@ public class Clocks extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel Center;
+    private javax.swing.JPanel West;
     private javax.swing.JCheckBox cbFirst;
     private javax.swing.JCheckBox cbLocal;
     private javax.swing.JCheckBox cbSecond;
