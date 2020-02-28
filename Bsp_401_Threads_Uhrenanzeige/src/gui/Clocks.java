@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -57,6 +56,7 @@ public class Clocks extends javax.swing.JFrame {
         tfLocal.setText("Local Time");
         tfLocal.setBorder(null);
         tfLocal.setName(""); // NOI18N
+        tfLocal.setPreferredSize(new java.awt.Dimension(200, 100));
         West.add(tfLocal);
 
         cbLocal.setBackground(new java.awt.Color(0, 0, 0));
@@ -72,10 +72,11 @@ public class Clocks extends javax.swing.JFrame {
         tfFirst.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tfFirst.setForeground(new java.awt.Color(255, 255, 255));
         tfFirst.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        tfFirst.setText("Australia/Sydney");
+        tfFirst.setText("Sydney");
         tfFirst.setToolTipText("");
         tfFirst.setBorder(null);
         tfFirst.setName(""); // NOI18N
+        tfFirst.setPreferredSize(new java.awt.Dimension(200, 100));
         tfFirst.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 onCityChange(evt);
@@ -96,9 +97,10 @@ public class Clocks extends javax.swing.JFrame {
         tfSecond.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tfSecond.setForeground(new java.awt.Color(255, 255, 255));
         tfSecond.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        tfSecond.setText("America/New York");
+        tfSecond.setText("New York");
         tfSecond.setBorder(null);
         tfSecond.setName(""); // NOI18N
+        tfSecond.setPreferredSize(new java.awt.Dimension(200, 100));
         tfSecond.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 onCityChange(evt);
@@ -144,7 +146,7 @@ public class Clocks extends javax.swing.JFrame {
 
     private static Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
     public void uncaughtException(Thread th, Throwable ex) {
-        JOptionPane.showMessageDialog(null, "Wrong format or city!", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 };
     

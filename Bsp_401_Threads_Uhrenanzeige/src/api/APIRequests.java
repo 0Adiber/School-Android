@@ -3,9 +3,15 @@ package api;
 
 import java.net.*;
 import java.io.*;
+import java.text.Normalizer;
+import java.time.ZoneId;
+import java.time.zone.ZoneRulesException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class APIRequests {
@@ -68,9 +74,18 @@ public class APIRequests {
     }
     
     public static String getTimeFromOrt(String ort) throws IOException {
+        
+        ort = ort.replace(" ", "_");
+        
         String[] res = getLocation(ort);
         if(res[0].equalsIgnoreCase("get not worked")) {
-            return "GET NOT WORKED";
+            Set<String> zones = ZoneId.getAvailableZoneIds();
+            for(String z : zones) {
+                String[] parts = z.split("/");
+                if(parts[parts.length-1].equalsIgnoreCase(ort))
+                    return z;
+            }
+            throw new ZoneRulesException("The GET-Request did not work; Could also not find city in Java's ZoneIds");
         }
         return getTime(res[0], res[1]);
     }
@@ -78,9 +93,8 @@ public class APIRequests {
     public static void main(String[] args) {
         
         try {
-            String[] res = getLocation("new_york");
-            System.out.println(Arrays.toString(res));
-            System.out.println(getTime(res[0], res[1]));
+            String res = getTimeFromOrt("new york");
+            System.out.println(res);
         } catch (IOException ex) {
             Logger.getLogger(APIRequests.class.getName()).log(Level.SEVERE, null, ex);
         }

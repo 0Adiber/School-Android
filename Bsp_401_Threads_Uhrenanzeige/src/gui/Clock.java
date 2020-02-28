@@ -34,12 +34,13 @@ public class Clock extends JPanel implements Runnable{
                 try {
                     if(zoneId == null) {
                         city = APIRequests.getTimeFromOrt(city);
+                        System.out.println(city);
                         zoneId = ZoneId.of(city);
                     }
                     time=LocalTime.now(zoneId);
                 }catch(ZoneRulesException ex) {
                     zoneId = null;
-                    throw new ZoneRulesException("Could not fetch time, try again later..");
+                    throw ex;
                 } catch (IOException ex) {
                     zoneId = null;
                     throw new ZoneRulesException("Could not fetch time, try again later..");
