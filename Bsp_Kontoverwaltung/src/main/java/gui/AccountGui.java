@@ -76,6 +76,8 @@ public class AccountGui extends javax.swing.JFrame {
 
         getContentPane().add(pane, java.awt.BorderLayout.CENTER);
 
+        pane2.setPreferredSize(new java.awt.Dimension(120, 130));
+
         liUsers.setBorder(javax.swing.BorderFactory.createTitledBorder("User"));
         liUsers.setFont(new java.awt.Font("Consolas", 0, 11)); // NOI18N
         liUsers.setComponentPopupMenu(muUser);

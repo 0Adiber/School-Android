@@ -26,14 +26,14 @@ public class AccountUser implements Runnable{
     @Override
     public void run() {
         
-        int deadlockCount;
+        int deadlocks;
         
         for(int i = 0; i<moves; i++) {
-            deadlockCount = 0;
-            long amount = RAND.nextInt(41)+10 * (RAND.nextBoolean() ? (-1) : 1);
+            deadlocks = 0;
+            long amount = (RAND.nextInt(41)+10) * (RAND.nextBoolean() ? (-1): (1));
             
             synchronized(account) {
-                while((account.getMoney()+amount) < 0 && deadlockCount < 3) {
+                while((account.getMoney()+amount) < 0 && deadlocks < 3) {
                     
                     //event queue to send to debug
                     try {
@@ -51,7 +51,7 @@ public class AccountUser implements Runnable{
                         account.wait(2000);
                     } catch(InterruptedException ex) {}
                     
-                    deadlockCount++;
+                    deadlocks++;
                     
                     //event queue to send to debug
                     try {
@@ -66,7 +66,7 @@ public class AccountUser implements Runnable{
                     }
                 }
                 
-                if(deadlockCount >= 3) {
+                if(deadlocks >= 3) {
                     i--;
                     continue;
                 }
