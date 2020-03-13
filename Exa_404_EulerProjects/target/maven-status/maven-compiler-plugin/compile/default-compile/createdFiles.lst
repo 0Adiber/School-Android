@@ -1,6 +1,9 @@
-euler59\CrackSlave.class
-euler59\Touple.class
+euler59\XorDecryptWorker.class
 euler39\Triple.class
-euler39\TriangleWorker.class
-euler59\Cracker.class
 euler39\TriangleLauncher.class
+euler59\XorDecryptLauncher.class
+euler96\SudokuLauncher.class
+euler96\SudokuWorker.class
+euler96\Sudoku.class
+euler39\TriangleWorker.class
+euler96\Soduku.class
