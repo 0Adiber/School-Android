@@ -19,6 +19,8 @@ public class SudokuLauncher {
     private Sudoku[] loadData() throws FileNotFoundException, IOException {
         Sudoku[] sudokus = new Sudoku[50];
         
+        String[] sudokuss = new String[50];
+        
         String path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "euler96" + File.separator + "sudoku.txt";
         FileReader fr = new FileReader(new File(path));
         BufferedReader br = new BufferedReader(fr);
