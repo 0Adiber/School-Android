@@ -12,7 +12,7 @@ public class HashTest {
     public static void main(String[] args) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            String password = "Lamar" + "Shington" + "9j0g3";
+            String password = "java" + "shit" + "aaaaa";
             byte[] hash = md.digest(password.getBytes());
             String hashAsHexString = DatatypeConverter.printHexBinary(hash);
             System.out.println(hashAsHexString);
