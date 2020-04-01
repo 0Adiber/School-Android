@@ -16,12 +16,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class BruteForceManager {
     
     public static char[] signs = new char[26+10];
     
-    private void crackPasswords() throws IOException, InterruptedException {
+    private void crackPasswords(int threads) throws IOException, InterruptedException {
         
         //add all possible chars to "signs" array for bruteforcing 
         for(char c = 'a'; c<='z'; c++)
@@ -30,11 +31,11 @@ public class BruteForceManager {
             signs[c-'0'+26] = c;
         
         //create pool and service
-        ExecutorService pool = Executors.newFixedThreadPool(12);
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
         CompletionService<String> service = new ExecutorCompletionService<>(pool);
         
         List<Person> people = loadData(); //load data
-        
+                
         //submit a worker for each person
         for(Person p : people) {
             service.submit(new BruteForceWorker(p));
@@ -53,24 +54,23 @@ public class BruteForceManager {
     }
     
     private List<Person> loadData() throws FileNotFoundException, IOException {
-        List<Person> people = new ArrayList<>();
-        
-        FileReader fr = new FileReader(new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "res" + File.separator + "passwd_file.csv"));
-        BufferedReader br = new BufferedReader(fr);
-        
-        String line = br.readLine();
-        
-        while((line = br.readLine()) != null) {
-            String[] parts = line.split(",");
-            people.add(new Person(parts[0], parts[1], parts[2], parts[3]));
+        String PATH = System.getProperty("user.dir") + File.separator + "src" + File.separator + "res" + File.separator + "passwd_file.csv";
+                
+        try {
+            return new BufferedReader(new FileReader(PATH))
+                    .lines()
+                    .skip(1)
+                    .map(Person::new)
+                    .collect(Collectors.toList());
+        }catch(FileNotFoundException ex) {
+            System.out.println(ex.toString());
+            return null;
         }
-        
-        return people;
     }
     
     public static void main(String[] args) {
         try {
-            new BruteForceManager().crackPasswords();
+            new BruteForceManager().crackPasswords(12);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(BruteForceManager.class.getName()).log(Level.SEVERE, null, ex);
         }
