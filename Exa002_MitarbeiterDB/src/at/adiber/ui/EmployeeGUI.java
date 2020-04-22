@@ -1,0 +1,261 @@
+package at.adiber.ui;
+
+import at.adiber.beans.Employee;
+import at.adiber.bl.AddEmployeeDialog;
+import at.adiber.bl.EmployeeTableModel;
+import at.adiber.db.DB_Access;
+import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
+public class EmployeeGUI extends javax.swing.JFrame {
+    
+    private DB_Access db;
+    private EmployeeTableModel resultTable;
+    private int currentDept = -1;
+    
+    public EmployeeGUI() {        
+        try {
+            db = new DB_Access();
+            db.init();
+            resultTable = new EmployeeTableModel(db.getAllEmployees());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        initComponents();
+        setLocationRelativeTo(null);
+        setSize(800, 600);
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        popDel = new javax.swing.JPopupMenu();
+        miDelete = new javax.swing.JMenuItem();
+        jPanel1 = new javax.swing.JPanel();
+        btAverage = new javax.swing.JButton();
+        btAddEmployee = new javax.swing.JButton();
+        btFindDepartment = new javax.swing.JButton();
+        tfDepartment = new javax.swing.JTextField();
+        btInsertData = new javax.swing.JButton();
+        lbFilter = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbResult = new javax.swing.JTable();
+
+        miDelete.setText("Delete");
+        miDelete.setActionCommand("on");
+        miDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onDelete(evt);
+            }
+        });
+        popDel.add(miDelete);
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        btAverage.setText("Get Average Salary");
+        btAverage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onGetAvgSal(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(btAverage, gridBagConstraints);
+
+        btAddEmployee.setText("Add Employee");
+        btAddEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onAddEmployee(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(btAddEmployee, gridBagConstraints);
+
+        btFindDepartment.setText("Filter By Department");
+        btFindDepartment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onFilterDept(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(btFindDepartment, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(tfDepartment, gridBagConstraints);
+
+        btInsertData.setText("Instert Test Data");
+        btInsertData.setActionCommand("");
+        btInsertData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onInsertTestData(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(btInsertData, gridBagConstraints);
+
+        lbFilter.setText("Filter Employees by Department");
+        lbFilter.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(lbFilter, gridBagConstraints);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.WEST);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        tbResult.setModel(resultTable);
+        tbResult.setComponentPopupMenu(popDel);
+        jScrollPane1.setViewportView(tbResult);
+
+        jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void onInsertTestData(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onInsertTestData
+        try {
+            db.initEmployees();
+            resultTable.changeData(db.getAllEmployees());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Couldn't add Employee Test Data to DB");
+        }
+    }//GEN-LAST:event_onInsertTestData
+
+    private void onAddEmployee(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onAddEmployee
+        AddEmployeeDialog aed = new AddEmployeeDialog(this);
+        Employee emp = aed.run();
+        if(emp != null) {
+            try {
+                db.insertEmployee(emp);
+                resultTable.changeData(db.getAllEmployees());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Ther was an error inserting the data (Maybe duplicate Key?)!");
+            }
+        }
+    }//GEN-LAST:event_onAddEmployee
+
+    private void onGetAvgSal(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onGetAvgSal
+        Object[] options = {"Female", "Male"};
+        int selected = JOptionPane.showOptionDialog(this, "Select Gender", "Avg Salary", JOptionPane.DEFAULT_OPTION, JOptionPane.DEFAULT_OPTION, null, options, options[0]);
+        
+        try {
+            if(currentDept == -1) {
+                double avg = db.getAverageSalery(((String)options[selected]).charAt(0));
+                JOptionPane.showMessageDialog(this, "The Average Salary of " + options[selected] + "s in all departments is " + NumberFormat.getCurrencyInstance().format(avg));
+            } else {
+                double avg = db.getAverageSalery(((String)options[selected]).charAt(0), currentDept);
+                JOptionPane.showMessageDialog(this, "The Average Salary of " + options[selected] + "s in department " + currentDept + " is " + NumberFormat.getCurrencyInstance().format(avg));
+            }
+        } catch(SQLException e) {
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data.");
+        }
+        
+    }//GEN-LAST:event_onGetAvgSal
+
+    private void onFilterDept(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onFilterDept
+        try {
+            String filter = tfDepartment.getText().trim();
+            if(filter.isEmpty()) {
+                currentDept = -1;
+                resultTable.changeData(db.getAllEmployees());
+                return;
+            }
+            int dept = Integer.parseInt(filter);
+            currentDept = dept;
+            resultTable.changeData(db.getEmployeesFromDepartment(dept));
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "The Department Filter has to be a Number!");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data.");
+        }
+    }//GEN-LAST:event_onFilterDept
+
+    private void onDelete(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDelete
+        Arrays.stream(tbResult.getSelectedRows()).forEach(i -> {
+            Object[] row = resultTable.getRow(i);
+            try {
+                db.removeEmployee(new Employee(row));
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "There was an error when deleting an employee");
+            }
+        });
+        
+        onFilterDept(null);
+    }//GEN-LAST:event_onDelete
+    
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(EmployeeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(EmployeeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(EmployeeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(EmployeeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new EmployeeGUI().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAddEmployee;
+    private javax.swing.JButton btAverage;
+    private javax.swing.JButton btFindDepartment;
+    private javax.swing.JButton btInsertData;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbFilter;
+    private javax.swing.JMenuItem miDelete;
+    private javax.swing.JPopupMenu popDel;
+    private javax.swing.JTable tbResult;
+    private javax.swing.JTextField tfDepartment;
+    // End of variables declaration//GEN-END:variables
+}
