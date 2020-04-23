@@ -11,11 +11,15 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -34,6 +38,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class AddEmployeeDialog extends JDialog implements ActionListener{
     
@@ -49,6 +54,8 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
     private int currentY = 0;
     private GridBagConstraints gbc;
     private JPanel panel;
+    
+    private static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd:mm:yyyy");
         
     public AddEmployeeDialog(Frame parent) {
         super(parent, "Enter Emp Data", true);
@@ -56,15 +63,16 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
         setLocation(loc.x+100, loc.y+100);
         panel = new JPanel();
         
-        setMinimumSize(new Dimension(500, 300));
+        
+        setMinimumSize(new Dimension(500, 420));
         panel = new JPanel();
-        panel.setMinimumSize(new Dimension(500, 300));
+        panel.setMinimumSize(new Dimension(500, 420));
         
         panel.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new java.awt.Insets(0, 10, 0, 0);
-        
+                
         JLabel lbPersNo = new JLabel("Personal Nr.:");
         tfPersNo = new JFormattedTextField(NumberFormat.getIntegerInstance());
         addRow(lbPersNo, tfPersNo);
@@ -91,13 +99,13 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
         tfAbtNo.setColumns(3);
         addRow(lbAbt, tfAbtNo);
         
+        addDatePicker();
+        
         btAdd = new JButton("Add Employee");
         btCancel = new JButton("Cancel");
         btAdd.addActionListener(this);
         btCancel.addActionListener(this);
-       
-        addDatePicker();
-        
+                
         gbc.gridx = 0;
         gbc.gridy = currentY++;
         gbc.gridwidth = 1;
@@ -140,7 +148,8 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
         } else {
             data = null;
         }
-        dispose();
+        
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
     
     public Employee run() {
@@ -162,12 +171,14 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
         fx.setBackground(color);
 
         panel.add(fx, gbc);
-
+        
         Platform.runLater(() -> {
+            // this is just weird a lot of times
             fx.setScene(createDatePicker());
+            setMinimumSize(new Dimension(300, getHeight()+50));
             pack();
         });
-
+       
         currentY++;
         gbc.insets = new java.awt.Insets(10, 10, 10, 10);
     }
