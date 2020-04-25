@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Employee {
     
@@ -14,6 +15,8 @@ public class Employee {
     private double gehalt;
     private int abt_nr;
     private String geschlecht;
+    
+    private static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public Employee(int pers_nr, String name, String vorname, LocalDate geb_datum, double gehalt, int abt_nr, String geschlecht) {
         this.pers_nr = pers_nr;
@@ -23,6 +26,17 @@ public class Employee {
         this.gehalt = gehalt;
         this.abt_nr = abt_nr;
         this.geschlecht = geschlecht;
+    }
+    
+    public Employee(String line) {
+        //vorname,nachname,geb,gehalt,abt,geschlecht
+        this.pers_nr = -1;
+        this.vorname = line.split(",")[0];
+        this.name = line.split(",")[1];
+        this.gehalt = Double.parseDouble(line.split(",")[3]);
+        this.abt_nr = Integer.parseInt(line.split(",")[4]);
+        this.geschlecht = ""+line.split(",")[5].charAt(0);
+        this.geb_datum = LocalDate.parse(line.split(",")[2], DTF);
     }
 
     //when tretrieving from db

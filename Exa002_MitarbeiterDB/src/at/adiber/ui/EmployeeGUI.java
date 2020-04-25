@@ -4,11 +4,21 @@ import at.adiber.beans.Employee;
 import at.adiber.bl.AddEmployeeDialog;
 import at.adiber.bl.EmployeeTableModel;
 import at.adiber.db.DB_Access;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 public class EmployeeGUI extends javax.swing.JFrame {
@@ -47,6 +57,7 @@ public class EmployeeGUI extends javax.swing.JFrame {
         tfDepartment = new javax.swing.JTextField();
         btInsertData = new javax.swing.JButton();
         lbFilter = new javax.swing.JLabel();
+        btAddFromRes = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbResult = new javax.swing.JTable();
@@ -125,6 +136,17 @@ public class EmployeeGUI extends javax.swing.JFrame {
         gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanel1.add(lbFilter, gridBagConstraints);
+
+        btAddFromRes.setText("Add Employees (from res .csv)");
+        btAddFromRes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addFromRes(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        jPanel1.add(btAddFromRes, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.WEST);
 
@@ -211,6 +233,36 @@ public class EmployeeGUI extends javax.swing.JFrame {
         
         onFilterDept(null);
     }//GEN-LAST:event_onDelete
+
+    private void addFromRes(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addFromRes
+        Path path = Paths.get(System.getProperty("user.dir"), "src", "res", "eingabe.csv");
+    
+        try {
+            FileReader fr = new FileReader(path.toFile());
+            BufferedReader br = new BufferedReader(fr);
+            
+            List<Employee> tEmps = br.lines()
+                                     .skip(1)
+                                     .map(Employee::new)
+                                     .collect(Collectors.toList());
+            
+            for(Employee e : tEmps) {
+                e.setPers_nr(++resultTable.lastKey);
+                db.insertEmployee(e);
+            }
+            
+            resultTable.changeData(db.getAllEmployees());
+            
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Could not load 'eingabe.csv'");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Could not load 'eingabe.csv'");
+        } catch(SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "There was an error inserting the new data!");
+        }
+        
+    }//GEN-LAST:event_addFromRes
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -246,6 +298,7 @@ public class EmployeeGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddEmployee;
+    private javax.swing.JButton btAddFromRes;
     private javax.swing.JButton btAverage;
     private javax.swing.JButton btFindDepartment;
     private javax.swing.JButton btInsertData;

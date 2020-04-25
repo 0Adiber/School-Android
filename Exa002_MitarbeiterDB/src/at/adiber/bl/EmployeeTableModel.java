@@ -10,9 +10,12 @@ public class EmployeeTableModel extends AbstractTableModel{
     private String[] columns = {"Personal Nr.", "Nachname", "Vorname", "Geburtsdatum", "Gehalt", "Abteilungs Nr.", "Geschlecht"};
     
     private List<Object[]> rowData;
+    
+    public static int lastKey = 0;
 
     public EmployeeTableModel(List<Employee> employees) {
         this.rowData = employees.stream().map(Employee::convertToTableData).collect(Collectors.toList());
+        lastKey = employees.get(employees.size()-1).getPers_nr();
     }
 
     @Override
