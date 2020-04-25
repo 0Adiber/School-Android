@@ -30,13 +30,11 @@ public class EmployeeGUI extends javax.swing.JFrame {
     public EmployeeGUI() {        
         try {
             db = new DB_Access();
-            db.init();
-            resultTable = new EmployeeTableModel(db.getAllEmployees());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        resultTable = new EmployeeTableModel();
         
         initComponents();
         setLocationRelativeTo(null);
@@ -58,6 +56,8 @@ public class EmployeeGUI extends javax.swing.JFrame {
         btInsertData = new javax.swing.JButton();
         lbFilter = new javax.swing.JLabel();
         btAddFromRes = new javax.swing.JButton();
+        btConnect = new javax.swing.JButton();
+        btDisconnect = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbResult = new javax.swing.JTable();
@@ -125,7 +125,7 @@ public class EmployeeGUI extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanel1.add(btInsertData, gridBagConstraints);
 
@@ -148,6 +148,28 @@ public class EmployeeGUI extends javax.swing.JFrame {
         gridBagConstraints.gridy = 3;
         jPanel1.add(btAddFromRes, gridBagConstraints);
 
+        btConnect.setText("Connect");
+        btConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onConnect(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel1.add(btConnect, gridBagConstraints);
+
+        btDisconnect.setText("Disconnect");
+        btDisconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onDisconnect(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel1.add(btDisconnect, gridBagConstraints);
+
         getContentPane().add(jPanel1, java.awt.BorderLayout.WEST);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -167,8 +189,11 @@ public class EmployeeGUI extends javax.swing.JFrame {
         try {
             db.initEmployees();
             resultTable.changeData(db.getAllEmployees());
+            resultTable.lastKey = 0;
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Couldn't add Employee Test Data to DB");
+        } catch(NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "You have to connect to the DB first!");
         }
     }//GEN-LAST:event_onInsertTestData
 
@@ -180,7 +205,9 @@ public class EmployeeGUI extends javax.swing.JFrame {
                 db.insertEmployee(emp);
                 resultTable.changeData(db.getAllEmployees());
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Ther was an error inserting the data (Maybe duplicate Key?)!");
+                JOptionPane.showMessageDialog(this, "Ther was an error inserting the data (Maybe duplicate Key or not connected to DB?)!");
+            } catch(NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "You have to connect to the DB first!");
             }
         }
     }//GEN-LAST:event_onAddEmployee
@@ -199,7 +226,9 @@ public class EmployeeGUI extends javax.swing.JFrame {
             }
         } catch(SQLException e) {
             JOptionPane.showMessageDialog(this, "There was an error retrieving the data.");
-        }
+        } catch(NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "You have to connect to the DB first!");
+            }
         
     }//GEN-LAST:event_onGetAvgSal
 
@@ -218,7 +247,9 @@ public class EmployeeGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "The Department Filter has to be a Number!");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "There was an error retrieving the data.");
-        }
+        } catch(NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "You have to connect to the DB first!");
+            }
     }//GEN-LAST:event_onFilterDept
 
     private void onDelete(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDelete
@@ -260,9 +291,29 @@ public class EmployeeGUI extends javax.swing.JFrame {
         } catch(SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "There was an error inserting the new data!");
+        } catch(NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "You have to connect to the DB first!");
         }
         
     }//GEN-LAST:event_addFromRes
+
+    private void onConnect(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onConnect
+        try {
+            db.init();
+            resultTable.changeData(db.getAllEmployees());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Can't connect to DB!");
+        }
+    }//GEN-LAST:event_onConnect
+
+    private void onDisconnect(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDisconnect
+        try {
+            db.disconnect();
+            resultTable.changeData(new ArrayList<>());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Can't disconnect from DB!");
+        }
+    }//GEN-LAST:event_onDisconnect
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -300,6 +351,8 @@ public class EmployeeGUI extends javax.swing.JFrame {
     private javax.swing.JButton btAddEmployee;
     private javax.swing.JButton btAddFromRes;
     private javax.swing.JButton btAverage;
+    private javax.swing.JButton btConnect;
+    private javax.swing.JButton btDisconnect;
     private javax.swing.JButton btFindDepartment;
     private javax.swing.JButton btInsertData;
     private javax.swing.JPanel jPanel1;

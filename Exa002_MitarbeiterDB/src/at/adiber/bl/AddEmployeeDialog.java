@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -143,6 +144,10 @@ public class AddEmployeeDialog extends JDialog implements ActionListener{
                         , Integer.parseInt(tfAbtNo.getValue().toString())
                         , (String)cbGender.getSelectedItem());
             } catch(NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "Please enter all the data first!");
+                return;
+            } catch(NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Please enter all the data first!");
                 return;
             }
         } else {

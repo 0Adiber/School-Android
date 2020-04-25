@@ -1,6 +1,7 @@
 package at.adiber.bl;
 
 import at.adiber.beans.Employee;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.table.AbstractTableModel;
@@ -9,13 +10,16 @@ public class EmployeeTableModel extends AbstractTableModel{
     
     private String[] columns = {"Personal Nr.", "Nachname", "Vorname", "Geburtsdatum", "Gehalt", "Abteilungs Nr.", "Geschlecht"};
     
-    private List<Object[]> rowData;
+    private List<Object[]> rowData = new ArrayList<>();
     
     public static int lastKey = 0;
 
     public EmployeeTableModel(List<Employee> employees) {
         this.rowData = employees.stream().map(Employee::convertToTableData).collect(Collectors.toList());
-        lastKey = employees.get(employees.size()-1).getPers_nr();
+    }
+    
+    public EmployeeTableModel() {
+        
     }
 
     @Override
