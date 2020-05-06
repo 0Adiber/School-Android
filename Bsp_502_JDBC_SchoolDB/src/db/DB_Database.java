@@ -1,19 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package database;
+package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- *
- * @author SF <htlkaindorf.at>
- */
 public class DB_Database {
 
   private String db_url;
@@ -26,7 +17,6 @@ public class DB_Database {
   public DB_Database() throws ClassNotFoundException, SQLException {
     loadProperties();
     Class.forName(db_driver);
-    connect();
   }
 
   /**
@@ -72,6 +62,10 @@ public class DB_Database {
       throw new RuntimeException("database connection error");
     }
     cachedConnection.releaseStatement(statement);
+  }
+  
+  public boolean isConnected() throws SQLException {
+      return !(connection == null || connection.isClosed());
   }
 
   public static void main(String[] args) {
