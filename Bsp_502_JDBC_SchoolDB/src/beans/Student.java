@@ -128,5 +128,11 @@ public class Student {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        //Klasse;Familienname;Vorname;Geschlecht;Geburtsdatum
+        return String.format("%s;%s;%s;%s;%s", className,firstname,surname,gender,DTF.format(birthdate));
+    }
 }
 

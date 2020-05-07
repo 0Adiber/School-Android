@@ -1,7 +1,7 @@
 package gui;
 
 import beans.Student;
-import bl.LoadData;
+import bl.DataHandler;
 import db.DB_Access;
 import java.awt.Color;
 import java.sql.SQLException;
@@ -37,6 +37,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
         pnBt = new javax.swing.JPanel();
         btConn = new javax.swing.JButton();
         btImport = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         btQuit = new javax.swing.JButton();
         pnMain = new javax.swing.JPanel();
         pnClass = new javax.swing.JPanel();
@@ -87,6 +88,15 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
         });
         pnBt.add(btImport);
 
+        jButton1.setBackground(new java.awt.Color(153, 255, 0));
+        jButton1.setText("Exportieren");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onExport(evt);
+            }
+        });
+        pnBt.add(jButton1);
+
         btQuit.setBackground(new java.awt.Color(0, 153, 255));
         btQuit.setForeground(new java.awt.Color(255, 255, 255));
         btQuit.setText("Beenden");
@@ -103,7 +113,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
         pnMain.setLayout(new java.awt.BorderLayout());
 
         pnClass.setBackground(new java.awt.Color(51, 51, 51));
-        pnClass.setLayout(new java.awt.FlowLayout(2));
+        pnClass.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         lbClass.setForeground(new java.awt.Color(255, 255, 255));
         lbClass.setText("Klasse:");
@@ -345,14 +355,14 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
 
     private void onConn(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onConn
         try {
-            if(!DB_Access.getInstance().getDatabase().isConnected()) {
-                DB_Access.getInstance().getDatabase().connect();
+            if(!DB_Access.getInstance().isConnected()) {
+                DB_Access.getInstance().connect();
                 btConn.setBackground(Color.RED);
                 btConn.setText("Trennen");
                 changeEditMode(false);
                 DB_Access.getInstance().deleteAll();
             } else {
-                DB_Access.getInstance().getDatabase().disconnect();
+                DB_Access.getInstance().disconnect();
                 btConn.setBackground(Color.GREEN);
                 btConn.setText("Verbinden");
                 cbClass.removeAllItems();
@@ -387,14 +397,14 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
     
     private void onImport(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onImport
         try {
-            if(!DB_Access.getInstance().getDatabase().isConnected()){
+            if(!DB_Access.getInstance().isConnected()){
                 JOptionPane.showMessageDialog(this, "Du musst dich zuerst mit der Datenbank verbinden!");
                 return;
             }
             DB_Access.getInstance().deleteAll();
             cbClass.removeAllItems();
             
-            List<Student> ss = LoadData.loadData();
+            List<Student> ss = DataHandler.loadData();
             ss.sort(Comparator.comparing(Student::getSurname).thenComparing(Student::getFirstname));
             
             HashMap<String,Integer> LastKatNr = new HashMap<>();
@@ -415,6 +425,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
             updateStudent(students.get(0));
             
         } catch (SQLException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "SQL-Error: Gibt es die Tables: grade & student??");
         }
     }//GEN-LAST:event_onImport
@@ -455,7 +466,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
 
     private void onNew(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onNew
         try {
-            if(!DB_Access.getInstance().getDatabase().isConnected()) {
+            if(!DB_Access.getInstance().isConnected()) {
                 JOptionPane.showMessageDialog(this, "Du musst dich zuerst mit der Datenbank verbinden!");
                 return;
             }
@@ -474,7 +485,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
             try {
                 geb = LocalDate.parse(JOptionPane.showInputDialog("Geburtsdatum?"),DTF);
             }catch(DateTimeParseException e) {
-                JOptionPane.showMessageDialog(this, "Bitte das Datum in folgender Form eingeben: DD.MM.YYYY");
+                JOptionPane.showMessageDialog(this, "Bitte das Datum in folgender Form eingeben: DD.MM.YYYY und auch innerhalb des Logischen bleiben!");
             } catch(NullPointerException e) {
                 JOptionPane.showMessageDialog(this, "Bitte gib ein Datum ein :(");
             }
@@ -523,6 +534,24 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
                 
         JOptionPane.showMessageDialog(this, "Ein neuer Schüler wurde zur Klasse " + (String)cbClass.getSelectedItem() + " hinzugefügt!");
     }//GEN-LAST:event_onNew
+
+    private void onExport(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExport
+        
+        try {
+            List<Student> toExport = DB_Access.getInstance().getAllStudents();
+            if(DataHandler.saveData(toExport))
+                JOptionPane.showMessageDialog(this, "Exportiert unter \"res/output.csv\"!");
+            else
+                JOptionPane.showMessageDialog(this, "Es gab einen Fehler beim Speichern!");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Es ist ein Datenbankfehler aufgetreten!");
+            return;
+        } catch(RuntimeException e) {
+            JOptionPane.showMessageDialog(this, "Du musst dich zuerst mit der Datenbank verbinden!");
+            return;
+        }
+        
+    }//GEN-LAST:event_onExport
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -565,6 +594,7 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
     private javax.swing.JButton btQuit;
     private javax.swing.JButton btStart;
     private javax.swing.JComboBox<String> cbClass;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lbAlt;
     private javax.swing.JLabel lbClass;
     private javax.swing.JLabel lbGebDat;

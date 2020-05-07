@@ -26,9 +26,19 @@ public class DB_Access {
     }
     return theInstance;
   }
+   
+  public void connect() throws SQLException {
+      db.connect();
+  }
   
-  public DB_Database getDatabase() {
-      return db;
+  public boolean isConnected() throws SQLException {
+      return db.isConnected();
+  }
+  
+  public void disconnect() throws SQLException {
+      insertClasspStat = null;
+      insertStudentpStat = null;
+      db.disconnect();
   }
 
   private DB_Access() {
