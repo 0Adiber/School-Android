@@ -14,10 +14,8 @@ public class DB_Access {
   private static DB_Access theInstance = null;
   private DB_Database db;
   
-  private static int lastStudentId = 0, lastClassId = 0;
-  
-  private final String insertStudentString = "INSERT INTO student (studentid, classid, catno, firstname, surname, gender, dateofbirth) VALUES ( ? , ? , ? , ?, ?, ?, ?);";
-  private final String insertClassString = "INSERT INTO grade (classid,classname) VALUES (?,?);";
+  private final String insertStudentString = "INSERT INTO student (classid, catno, firstname, surname, gender, dateofbirth) VALUES (? , ? , ?, ?, ?, ?);";
+  private final String insertClassString = "INSERT INTO grade (classname) VALUES (?);";
   private PreparedStatement insertStudentpStat = null, insertClasspStat = null;
   
   public static DB_Access getInstance() {
@@ -79,13 +77,12 @@ public class DB_Access {
     if (insertStudentpStat == null) {
       insertStudentpStat = db.getConnection().prepareStatement(insertStudentString);
     }
-    insertStudentpStat.setInt(1, lastStudentId++);
-    insertStudentpStat.setInt(2, getGradeId(student.getClassName()));
-    insertStudentpStat.setInt(3, student.getCatalogNo());
-    insertStudentpStat.setString(4, student.getFirstname());
-    insertStudentpStat.setString(5, student.getSurname());
-    insertStudentpStat.setString(6, student.getGender());
-    insertStudentpStat.setDate(7, Date.valueOf(student.getBirthdate()));
+    insertStudentpStat.setInt(1, getGradeId(student.getClassName()));
+    insertStudentpStat.setInt(2, student.getCatalogNo());
+    insertStudentpStat.setString(3, student.getFirstname());
+    insertStudentpStat.setString(4, student.getSurname());
+    insertStudentpStat.setString(5, student.getGender());
+    insertStudentpStat.setDate(6, Date.valueOf(student.getBirthdate()));
     
     int numDataSets = insertStudentpStat.executeUpdate();
     return numDataSets > 0;
@@ -94,8 +91,7 @@ public class DB_Access {
   public boolean insertClass(String classname) throws SQLException {
       if(insertClasspStat == null)
           insertClasspStat = db.getConnection().prepareStatement(insertClassString);
-      insertClasspStat.setInt(1, lastClassId++);
-      insertClasspStat.setString(2, classname);
+      insertClasspStat.setString(1, classname);
       
       return insertClasspStat.executeUpdate() > 0;
   }

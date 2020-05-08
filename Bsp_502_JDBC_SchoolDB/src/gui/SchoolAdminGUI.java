@@ -425,7 +425,6 @@ public class SchoolAdminGUI extends javax.swing.JFrame {
             updateStudent(students.get(0));
             
         } catch (SQLException ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "SQL-Error: Gibt es die Tables: grade & student??");
         }
     }//GEN-LAST:event_onImport
