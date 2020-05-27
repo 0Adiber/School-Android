@@ -152,12 +152,12 @@ public class DB_Access {
                 currAuthors.clear();
                 currGenres.clear();
                 currBook = book;
-            } else {
-                if (!currAuthors.contains(new Author(rs)))
-                    currAuthors.add(new Author(rs));
-                if (!currGenres.contains(new Genre(rs)))
-                    currGenres.add(new Genre(rs));
             }
+            if (!currAuthors.contains(new Author(rs)))
+                currAuthors.add(new Author(rs));
+            if (!currGenres.contains(new Genre(rs)))
+                currGenres.add(new Genre(rs));
+            
         }
 
         if (currBook != null) {

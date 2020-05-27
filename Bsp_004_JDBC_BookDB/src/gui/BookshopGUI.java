@@ -66,7 +66,7 @@ public class BookshopGUI extends javax.swing.JFrame {
         kit.setStyleSheet(styles);
         epDetails.setEditorKit(kit);
 
-        setSize(1000, 500);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
     }
 
