@@ -17,9 +17,7 @@ public class EmployeesGUI extends javax.swing.JFrame {
     public EmployeesGUI() {
         initComponents();
         
-        try {
-            DBAccess.getInstance().connect();
-            
+        try {            
             depts = DBAccess.getInstance().getAllDepartments();
             depts.forEach(d -> {
                 cbDept.addItem(d);
@@ -63,6 +61,11 @@ public class EmployeesGUI extends javax.swing.JFrame {
         pnFilter.add(lbDept);
 
         cbDept.setMaximumRowCount(1000);
+        cbDept.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onDeptChange(evt);
+            }
+        });
         pnFilter.add(cbDept);
 
         cbBirth.setText("Birthdate before");
@@ -71,10 +74,22 @@ public class EmployeesGUI extends javax.swing.JFrame {
         tfBirth.setText("todo");
         pnFilter.add(tfBirth);
 
+        cbMale.setSelected(true);
         cbMale.setText("Male");
+        cbMale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onGenderChange(evt);
+            }
+        });
         pnFilter.add(cbMale);
 
+        cbFemale.setSelected(true);
         cbFemale.setText("Female");
+        cbFemale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onGenderChange(evt);
+            }
+        });
         pnFilter.add(cbFemale);
 
         pnleft.add(pnFilter);
@@ -101,6 +116,48 @@ public class EmployeesGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void onGenderChange(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onGenderChange
+        try {
+            Department d = (Department)cbDept.getSelectedItem();
+            
+            if(cbMale.isSelected() && cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","F"}));
+            else if(cbMale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","M"}));
+            else if(cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"F","F"}));
+            
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Missing the Postgres Library!");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
+        }
+    }//GEN-LAST:event_onGenderChange
+
+    private void onDeptChange(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDeptChange
+        if(etm == null)
+            return;
+        try {
+            Department d = (Department)cbDept.getSelectedItem();
+            
+            if(cbMale.isSelected() && cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","F"}));
+            else if(cbMale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","M"}));
+            else if(cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"F","F"}));
+            
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Missing the Postgres Library!");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
+        }
+    }//GEN-LAST:event_onDeptChange
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

@@ -36,5 +36,16 @@ public class EmployeeModel extends AbstractTableModel {
     public String getColumnName(int col) {
         return cols.get(col);
     }
+
+    public List<Employee> getEmps() {
+        return emps;
+    }
+
+    public void setEmps(List<Employee> emps) {
+        this.emps = emps;
+        this.fireTableDataChanged();
+    }
+    
+    
     
 }
