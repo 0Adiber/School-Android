@@ -59,7 +59,7 @@ public class Employee {
     }
 
     public String[] toArray() {
-        return new String[] {firstname+", "+lastname, gender.toString(), DTF.format(birthdate), DTF.format(hiredate)};
+        return new String[] {lastname+", "+firstname, gender.toString(), DTF.format(birthdate), DTF.format(hiredate)};
     }
     
 }

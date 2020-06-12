@@ -1,10 +1,8 @@
 package bl;
 
 import beans.Employee;
-import database.DBAccess;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -13,9 +11,7 @@ public class EmployeeModel extends AbstractTableModel {
     List<Employee> emps;
     List<String> cols = Arrays.asList("Name","Gender","Birthdate","Hiredate");
     
-    public EmployeeModel() throws ClassNotFoundException, SQLException {
-        emps = DBAccess.getInstance().getAllEmployees();
-    }
+    boolean[] order = new boolean[]{false, false, false, false};
     
     @Override
     public int getRowCount() {
@@ -44,8 +40,50 @@ public class EmployeeModel extends AbstractTableModel {
     public void setEmps(List<Employee> emps) {
         this.emps = emps;
         this.fireTableDataChanged();
+        order = new boolean[]{false, false, false, false};
     }
     
-    
+    public void sort(String column) {
+        switch(column) {
+            case "name":
+                if(order[0] == false) {
+                    this.emps.sort(new SortByName());
+                    order[0] = true;
+                } else {
+                    this.emps.sort(new SortByName().reversed());
+                    order[0] = false;
+                }
+                break;
+            case "gender":
+                if(order[1] == false) {
+                    this.emps.sort(new SortByGender());
+                    order[1] = true;
+                } else {
+                    this.emps.sort(new SortByGender().reversed());
+                    order[1] = false;
+                }
+                break;
+            case "birthdate":
+                if(order[2] == false) {
+                    this.emps.sort(new SortByBirth());
+                    order[2] = true;
+                } else {
+                    this.emps.sort(new SortByBirth().reversed());
+                    order[2] = false;
+                }
+                break;
+            case "hiredate":
+                if(order[3] == false) {
+                    this.emps.sort(new SortByHire());
+                    order[3] = true;
+                } else {
+                    this.emps.sort(new SortByHire().reversed());
+                    order[3] = false;
+                }
+                break;
+        }
+        
+        fireTableDataChanged();
+    }
     
 }

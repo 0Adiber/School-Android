@@ -3,7 +3,12 @@ package gui;
 import beans.Department;
 import bl.EmployeeModel;
 import database.DBAccess;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +18,8 @@ public class EmployeesGUI extends javax.swing.JFrame {
 
     private EmployeeModel etm;
     private List<Department> depts;
+    
+    private static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     public EmployeesGUI() {
         initComponents();
@@ -25,12 +32,25 @@ public class EmployeesGUI extends javax.swing.JFrame {
             
             etm = new EmployeeModel();
             taEmps.setModel(etm);
+            etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(depts.get(0).getDeptno(), DTF.format(LocalDate.now()), "M", "F"));
+            
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Please add the Postgres Library");
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database error");
         }
+        
+        taEmps.getTableHeader().addMouseListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                int col = taEmps.columnAtPoint(evt.getPoint());
+                String name = taEmps.getColumnName(col).toLowerCase();
+                etm.sort(name);
+            }
+            
+        });
         
     }
     
@@ -69,9 +89,18 @@ public class EmployeesGUI extends javax.swing.JFrame {
         pnFilter.add(cbDept);
 
         cbBirth.setText("Birthdate before");
+        cbBirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onBirthBeforeSelect(evt);
+            }
+        });
         pnFilter.add(cbBirth);
 
-        tfBirth.setText("todo");
+        tfBirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onBirthBefore(evt);
+            }
+        });
         pnFilter.add(tfBirth);
 
         cbMale.setSelected(true);
@@ -122,11 +151,13 @@ public class EmployeesGUI extends javax.swing.JFrame {
             Department d = (Department)cbDept.getSelectedItem();
             
             if(cbMale.isSelected() && cbFemale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","F"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "M", "F"));
             else if(cbMale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","M"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "M", "M"));
             else if(cbFemale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"F","F"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "F", "F"));
+            else
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "M", "F"));
             
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -134,7 +165,8 @@ public class EmployeesGUI extends javax.swing.JFrame {
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
-        }
+        }       
+        
     }//GEN-LAST:event_onGenderChange
 
     private void onDeptChange(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDeptChange
@@ -144,11 +176,13 @@ public class EmployeesGUI extends javax.swing.JFrame {
             Department d = (Department)cbDept.getSelectedItem();
             
             if(cbMale.isSelected() && cbFemale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","F"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"M","F"}));
             else if(cbMale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"M","M"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"M","M"}));
             else if(cbFemale.isSelected())
-                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), new String[]{"F","F"}));
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"F","F"}));
+            else
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "M", "F"));
             
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -158,6 +192,63 @@ public class EmployeesGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
         }
     }//GEN-LAST:event_onDeptChange
+
+    private void onBirthBefore(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onBirthBefore
+        if(etm == null)
+            return;
+        try {
+            Department d = (Department)cbDept.getSelectedItem();
+            
+            LocalDate date;
+            if(!tfBirth.getText().trim().isEmpty()) {
+                date = LocalDate.parse(tfBirth.getText(), DTF);
+            } else {
+                date = LocalDate.now();
+            }
+            
+            if(cbMale.isSelected() && cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(date), new String[]{"M","F"}));
+            else if(cbMale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(date), new String[]{"M","M"}));
+            else if(cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(date), new String[]{"F","F"}));
+            else
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(date), "M", "F"));
+            
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Missing the Postgres Library!");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
+        } catch(DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid Date-Format: \"yyyy-MM-dd\"");
+        }
+    }//GEN-LAST:event_onBirthBefore
+
+    private void onBirthBeforeSelect(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onBirthBeforeSelect
+        if(etm == null)
+            return;
+        try {
+            Department d = (Department)cbDept.getSelectedItem();
+            
+            if(cbMale.isSelected() && cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"M","F"}));
+            else if(cbMale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"M","M"}));
+            else if(cbFemale.isSelected())
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), new String[]{"F","F"}));
+            else
+                etm.setEmps(DBAccess.getInstance().getAllEmployeesBy(d.getDeptno(), DTF.format(LocalDate.now()), "M", "F"));
+            
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Missing the Postgres Library!");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "There was an error retrieving the data from the database");
+        }
+    }//GEN-LAST:event_onBirthBeforeSelect
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

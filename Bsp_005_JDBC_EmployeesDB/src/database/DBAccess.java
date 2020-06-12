@@ -63,11 +63,11 @@ public class DBAccess {
         return e;
     }
     
-    public List<Employee> getAllEmployeesBy(String deptNo, String ...gender) throws SQLException {
+    public List<Employee> getAllEmployeesBy(String deptNo, String date, String ...gender) throws SQLException {
         List<Employee> emps = new ArrayList<>();
         
-        String query = SQLStrings.GETALLEMP.replace("(department)", "'"+deptNo+"'").replace("(gender1)", "'"+gender[0]+"'").replace("(gender2)", "'"+gender[1]+"'");
-        
+        String query = SQLStrings.GETALLEMPBY.replace("(department)", "'"+deptNo+"'").replace("(gender1)", "'"+gender[0]+"'").replace("(gender2)", "'"+gender[1]+"'").replace("(birth)", "'"+date+"'");
+                
         Statement stat = db.getStatement();
         ResultSet rs = stat.executeQuery(query);
         while(rs.next()) {

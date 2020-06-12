@@ -72,11 +72,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Birthdate before"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onBirthBeforeSelect"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="tfBirth">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="todo"/>
-              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onBirthBefore"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="cbMale">
               <Properties>
