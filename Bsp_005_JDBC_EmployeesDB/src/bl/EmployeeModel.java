@@ -43,6 +43,11 @@ public class EmployeeModel extends AbstractTableModel {
         order = new boolean[]{false, false, false, false};
     }
     
+    public void addEmp(Employee emp) {
+        this.emps.add(emp);
+        this.fireTableRowsInserted(emps.size()-1, emps.size()-1);
+    }
+    
     public void sort(String column) {
         switch(column) {
             case "name":
