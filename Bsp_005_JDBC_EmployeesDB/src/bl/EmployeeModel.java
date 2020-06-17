@@ -1,9 +1,17 @@
 package bl;
 
 import beans.Employee;
+import database.DBAccess;
+import gui.EmployeesGUI;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 public class EmployeeModel extends AbstractTableModel {
@@ -43,9 +51,18 @@ public class EmployeeModel extends AbstractTableModel {
         order = new boolean[]{false, false, false, false};
     }
     
+    public Employee getEmp(int row) {
+        return emps.get(row);
+    }
+    
     public void addEmp(Employee emp) {
         this.emps.add(emp);
         this.fireTableRowsInserted(emps.size()-1, emps.size()-1);
+    }
+    
+    public void updateEmp(int index, Employee emp) {
+        emps.remove(index);
+        emps.add(index, emp);
     }
     
     public void sort(String column) {
@@ -90,5 +107,49 @@ public class EmployeeModel extends AbstractTableModel {
         
         fireTableDataChanged();
     }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return (getColumnName(col).equals(cols.get(0)) || getColumnName(col).equals(cols.get(3)));
+    }
+
+    @Override
+    public void setValueAt(Object obj, int row, int col) {
+        
+        Employee emp = emps.get(row);
+        
+        //Name
+        if(getColumnName(col).equals(cols.get(0))) {
+            String name = (String)obj;
+            String[] parts = name.split(",");
+            
+            emp.setLastname(parts[0]);
+            emp.setFirstname(parts.length == 1?"":parts[1]);
+        }
+        //Hiredate
+        else if(getColumnName(col).equals(cols.get(3))) {
+            try {
+                String ds = (String)obj;
+                LocalDate date = LocalDate.parse(ds, Employee.DTF);
+                emp.setHiredate(date);
+            } catch(DateTimeParseException ex) {
+                JOptionPane.showMessageDialog(EmployeesGUI.gui, "Wrong date format! (dd.MM.yyyy)");
+            }
+        }
+        
+        try {
+            if(!DBAccess.getInstance().updateEmployee(row, emp)) {
+                JOptionPane.showMessageDialog(EmployeesGUI.gui, "Could not change Data!");
+            }
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(EmployeesGUI.gui, "Please add the Postgres Library");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(EmployeesGUI.gui, "Database error");
+        }
+        
+    }
+    
+    
     
 }

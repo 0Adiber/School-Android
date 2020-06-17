@@ -14,7 +14,7 @@ public class Employee {
     private LocalDate hiredate;
     private LocalDate birthdate;
     
-    private static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    public static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public Employee(int empno, String firstname, String lastname, Gender gender, LocalDate hiredate, LocalDate birthdate) {
         this.empno = empno;
@@ -61,5 +61,35 @@ public class Employee {
     public String[] toArray() {
         return new String[] {lastname+", "+firstname, gender.toString(), DTF.format(birthdate), DTF.format(hiredate)};
     }
+
+    public void setEmpno(int empno) {
+        this.empno = empno;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setHiredate(LocalDate hiredate) {
+        this.hiredate = hiredate;
+    }
+
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public static void setDTF(DateTimeFormatter DTF) {
+        Employee.DTF = DTF;
+    }
+    
+    
     
 }

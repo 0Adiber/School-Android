@@ -3,11 +3,11 @@ package database;
 import beans.Department;
 import beans.DepartmentManager;
 import beans.Employee;
+import beans.GehaltHistory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,28 +53,9 @@ public class DBAccess {
         
         return d;
     }
-    
-    public List<Employee> getAllEmployees() throws SQLException {
-        List<Employee> e = new ArrayList<>();
-        String query = SQLStrings.GETALLEMP;
-        Statement stat = db.getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         
-        if(empress != null)
-            empress.close();
-        
-        empress = stat.executeQuery(query);
-        
-        int count = 0;
-        while(empress.next() && count++<50) {
-            e.add(new Employee(empress));
-        }
-        db.releaseStatement(stat);
-        
-        return e;
-    }
-    
     public Employee getScrollEmployee() throws SQLException {
-        if(empress == null)
+        if(empress == null || empress.isClosed())
             return null;
         if(empress.next())
             return new Employee(empress);
@@ -97,7 +78,6 @@ public class DBAccess {
         while(empress.next() && count++<50) {
             emps.add(new Employee(empress));
         }
-        db.releaseStatement(stat);
         
         return emps;    
     }
@@ -114,6 +94,33 @@ public class DBAccess {
         }
         db.releaseStatement(stat);
         return mans;
+    }
+    
+    public List<GehaltHistory> getHistoryForEmp(int empno) throws SQLException {
+        List<GehaltHistory> history = new ArrayList<>();
+        
+        String query = SQLStrings.GETSAlFOREMP.replace("(employee)",""+empno);
+        
+        Statement stat = db.getStatement();
+        ResultSet rs = stat.executeQuery(query);
+        while(rs.next()) {
+            history.add(new GehaltHistory(rs));
+        }
+        db.releaseStatement(stat);
+        return history;
+    }
+    
+    public boolean updateEmployee(int row, Employee emp) throws SQLException {
+        if(empress.absolute(++row)) {
+            empress.updateString("first_name", emp.getFirstname());
+            empress.updateString("last_name", emp.getLastname());
+            empress.updateDate("hire_date", java.sql.Date.valueOf(emp.getHiredate()));
+            
+            empress.updateRow();
+            empress.moveToCurrentRow();
+            return true;
+        } 
+        return false;
     }
     
 }
