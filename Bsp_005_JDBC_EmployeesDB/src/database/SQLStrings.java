@@ -15,5 +15,9 @@ public class SQLStrings {
                                     + "WHERE dm.dept_no=(department)";
     
     public static String GETSAlFOREMP = "SELECT * FROM salaries WHERE emp_no=(employee)";
+    
+    public static String GETEMPDEPTCOUNT = "SELECT * FROM employees e "
+                                         + "INNER JOIN dept_emp de ON de.emp_no=e.emp_no "
+                                         + "WHERE de.dept_no=(department)";
 
 }

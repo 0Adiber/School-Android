@@ -4,10 +4,12 @@ import beans.Department;
 import beans.DepartmentManager;
 import beans.Employee;
 import beans.GehaltHistory;
+import beans.HirePeriod;
 import bl.EmployeeModel;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import database.DBAccess;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,16 +17,31 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.CategorySeries;
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
+import org.knowm.xchart.style.Styler.LegendPosition;
 
 public class EmployeesGUI extends javax.swing.JFrame {
 
@@ -35,8 +52,11 @@ public class EmployeesGUI extends javax.swing.JFrame {
     
     public static EmployeesGUI gui;
     
+    private XYChart chart;
+    
     public EmployeesGUI() {
         initComponents();
+        initChart();
         gui = this;
                 
         // styling of the html in the JEditorPane
@@ -105,7 +125,6 @@ public class EmployeesGUI extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Please add the Postgres Library");
         } catch (SQLException ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database error");
         }
         
@@ -120,6 +139,31 @@ public class EmployeesGUI extends javax.swing.JFrame {
             
         });
                 
+    }
+    
+    public void initChart() {
+        // Create Chart
+        chart = new XYChartBuilder().width(600).height(400).title("Angestellten").xAxisTitle("Year").yAxisTitle("Amount").build();
+
+        // Customize Chart
+        chart.getStyler().setLegendPosition(LegendPosition.InsideNE);
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
+        
+        // Schedule a job for the event-dispatching thread:
+        // creating and showing this application's GUI.
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+
+          @Override
+          public void run() {
+
+            // chart
+            JPanel chartPanel = new XChartPanel<XYChart>(chart);
+            getContentPane().add(chartPanel, BorderLayout.EAST);
+
+            // Display the window.
+            pack();
+          }
+        });
     }
     
     @SuppressWarnings("unchecked")
@@ -273,6 +317,21 @@ public class EmployeesGUI extends javax.swing.JFrame {
             }
             tpMan.setText(manRes);
             
+            Map<Integer,Integer> res = new HashMap<>();
+            
+            List<HirePeriod> hires = DBAccess.getInstance().getAngestellte(d.getDeptno());
+            
+            for(HirePeriod h : hires) {
+                for(int i = h.getFrom().getYear(); i <= (h.getTo().getYear()==9999?LocalDate.now().getYear():h.getTo().getYear()); i++) {
+                    if(!res.containsKey(i))
+                        res.put(i, 0);
+                    res.put(i, res.get(i)+1);
+                }
+            }
+                        
+            chart.addSeries(d.getDeptname(), new ArrayList<>(res.keySet()),new ArrayList<>(res.values()));
+            
+            getContentPane().update(getContentPane().getGraphics());
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Missing the Postgres Library!");
@@ -330,6 +389,7 @@ public class EmployeesGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_onWheelMove
 
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

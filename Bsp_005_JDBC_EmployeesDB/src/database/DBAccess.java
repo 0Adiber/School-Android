@@ -4,6 +4,7 @@ import beans.Department;
 import beans.DepartmentManager;
 import beans.Employee;
 import beans.GehaltHistory;
+import beans.HirePeriod;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -121,6 +122,20 @@ public class DBAccess {
             return true;
         } 
         return false;
+    }
+    
+    public List<HirePeriod> getAngestellte(String deptNo) throws SQLException {
+        List<HirePeriod> hires = new ArrayList<>();
+        
+        String query = SQLStrings.GETEMPDEPTCOUNT.replace("(department)","'"+deptNo+"'");
+        
+        Statement stat = db.getStatement();
+        ResultSet rs = stat.executeQuery(query);
+        while(rs.next()) {
+            hires.add(new HirePeriod(rs));
+        }
+        db.releaseStatement(stat);
+        return hires;
     }
     
 }
