@@ -122,6 +122,18 @@ public class EmployeesGUI extends javax.swing.JFrame {
             }
             tpMan.setText(manRes);
             
+            Map<Integer,Integer> res = new HashMap<>();
+            List<HirePeriod> hires = DBAccess.getInstance().getAngestellte(depts.get(0).getDeptno());
+            for(HirePeriod h : hires) {
+                for(int i = h.getFrom().getYear(); i <= (h.getTo().getYear()==9999?LocalDate.now().getYear():h.getTo().getYear()); i++) {
+                    if(!res.containsKey(i))
+                        res.put(i, 0);
+                    res.put(i, res.get(i)+1);
+                }
+            }
+            chart.addSeries(depts.get(0).getDeptname(), new ArrayList<>(res.keySet()),new ArrayList<>(res.values()));
+            getContentPane().update(getContentPane().getGraphics());
+            
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Please add the Postgres Library");
         } catch (SQLException ex) {
@@ -317,10 +329,12 @@ public class EmployeesGUI extends javax.swing.JFrame {
             }
             tpMan.setText(manRes);
             
+            for(Department i : depts) {
+                chart.removeSeries(i.getDeptname());
+            }
+            
             Map<Integer,Integer> res = new HashMap<>();
-            
             List<HirePeriod> hires = DBAccess.getInstance().getAngestellte(d.getDeptno());
-            
             for(HirePeriod h : hires) {
                 for(int i = h.getFrom().getYear(); i <= (h.getTo().getYear()==9999?LocalDate.now().getYear():h.getTo().getYear()); i++) {
                     if(!res.containsKey(i))
@@ -328,9 +342,7 @@ public class EmployeesGUI extends javax.swing.JFrame {
                     res.put(i, res.get(i)+1);
                 }
             }
-                        
             chart.addSeries(d.getDeptname(), new ArrayList<>(res.keySet()),new ArrayList<>(res.values()));
-            
             getContentPane().update(getContentPane().getGraphics());
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
